@@ -16,7 +16,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/join")
-    public String create() {return "create";}
+    public String createForm() {
+        return "create";
+    }
 
     @PostMapping("/join")
     public UserEntity createUser(@RequestBody UserDTO userDTO) {
@@ -24,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{email}")
-    public UserEntity getUserByEmail(@PathVariable String email) {
+    public UserEntity getUserByEmail(@PathVariable("email") String email) {
         return userService.getUserByEmail(email);
     }
 }
