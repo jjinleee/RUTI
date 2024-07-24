@@ -3,6 +3,7 @@ package com.hyejin.ruti.controller;
 import com.hyejin.ruti.dto.UserDTO;
 import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,11 +47,19 @@ public class UserController {
         return userService.isNicknameTaken(nickname);
     }
 
-
     //이메일로 회원찾기
     @GetMapping("/{email}")
     public UserDTO getUserByEmail(@PathVariable("email") String email) {
         return userService.getUserByEmail(email);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody UserDTO userDTO, HttpSession session){
+        UserDTO loginResult=userService.login(userDTO);
+        if(loginResult!=null){
+            session.setAttribute("loginEmail",loginResult.getUserEmail());
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }else {
+            return ResponseEntity.status(401).body("이메일 또는 비밀번호가 올바르지 않습니다.");        }
+    }
 }
