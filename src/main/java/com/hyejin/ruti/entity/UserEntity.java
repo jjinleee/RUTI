@@ -1,5 +1,6 @@
 package com.hyejin.ruti.entity;
 
+import com.hyejin.ruti.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,13 @@ public class UserEntity {
     @Column
     private String userPW;
 
+    // DTO를 Entity로 변환하는 메서드
+    public static UserEntity toUserEntity(UserDTO userDTO){
+        UserEntity userEntity=new UserEntity();
+        userEntity.setId(userDTO.getId());
+        userEntity.setUserEmail(userDTO.getUserEmail());
+        userEntity.setUserPW(userDTO.getUserPW());
+        userEntity.setNickname(userDTO.getNickname());
+        return userEntity;
+    }
 }
