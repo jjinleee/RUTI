@@ -21,11 +21,8 @@ public class UserService {
     }
 
     public UserEntity saveUser(UserDTO userDTO) {
-        UserEntity user = new UserEntity();
-        user.setNickname(userDTO.getNickname());
-        user.setUserEmail(userDTO.getUserEmail());
-        user.setUserPW(userDTO.getUserPW());
-        return userRepository.save(user);
+        UserEntity userEntity = UserEntity.toUserEntity(userDTO);
+        return userRepository.save(userEntity);
     }
 
     public UserEntity getUserByEmail(String userEmail) {
