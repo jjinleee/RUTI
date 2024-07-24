@@ -1,12 +1,14 @@
 package com.hyejin.ruti.controller;
 
 import com.hyejin.ruti.dto.MemoDTO;
-import com.hyejin.ruti.service.MemoService;
 import com.hyejin.ruti.entity.MemoEntity;
+import com.hyejin.ruti.service.MemoService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/memo")
@@ -15,16 +17,41 @@ public class MemoController {
 
     private final MemoService memoService;
 
-    @GetMapping("/add")
-    public String saveMemoForm(Model model) {
-        model.addAttribute("memoDTO", new MemoDTO());
-        return "add Memo";
+    @PostMapping("/add")
+    public MemoEntity save(@RequestBody MemoDTO memoDTO, HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail == null) {
+            throw new IllegalStateException("User not logged in");
+        }
+        return memoService.saveMemo(memoDTO, userEmail);
     }
 
+    @GetMapping("/")
+    public List<MemoDTO> findAll(HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail == null) {
+            throw new IllegalStateException("User not logged in");
+        }
+        return memoService.findAllByUser(userEmail);
+    }
 
-    @PostMapping("/add")
-    public MemoEntity save(@RequestBody MemoDTO memoDTO) {
-        System.out.println("memo DTO = " + memoDTO);
-        return memoService.saveMemo(memoDTO);
+    @GetMapping("/search")
+    public List<MemoDTO> search(@RequestParam("keyword") String keyword, HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail == null) {
+            throw new IllegalStateException("User not logged in");
+        }
+        return memoService.searchByContent(keyword, userEmail);
+    }
+
+    @PutMapping("/update/{id}")
+    public MemoEntity update(@PathVariable Long id, @RequestBody MemoDTO memoDTO) {
+        return memoService.updateMemo(id, memoDTO);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable Long id) {
+        memoService.deleteMemo(id);
     }
 }
+
