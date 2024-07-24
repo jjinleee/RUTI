@@ -23,7 +23,7 @@ public class MemoService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         MemoEntity memo = new MemoEntity();
-        memo.setMemoWriter(user.getNickname()); // 사용자 닉네임 설정
+        memo.setMemoWriter(user.getNickname());
         memo.setMemoContent(memoDTO.getMemoContent());
         return memoRepository.save(memo);
     }
@@ -41,7 +41,7 @@ public class MemoService {
     }
 
     public void deleteMemo(Long id) {
-        memoRepository.findById(id).ifPresent(memoRepository::delete);
+        memoRepository.deleteById(id);
     }
 
     public List<MemoDTO> searchByContent(String keyword, String userEmail) {
