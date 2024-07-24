@@ -51,5 +51,18 @@ public class UserService {
         return user.isPresent();
     }
 
+    public UserDTO login(UserDTO userDTO){
+        Optional<UserEntity> byemail=userRepository.findByUserEmail(userDTO.getUserEmail());
+        if(byemail.isPresent()){
+            UserEntity userEntity=byemail.get();
+            if(userEntity.getUserPW().equals(userDTO.getUserPW())){
+                UserDTO dto=UserDTO.toUserDTO((userEntity));
+                return dto;
+            } else{
+                return null;
+            }
+        } else return null;
+    }
+
 
 }
