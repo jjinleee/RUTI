@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +22,34 @@ public class UserService {
     }
 
     public UserEntity saveUser(UserDTO userDTO) {
+        if (isEmailTaken(userDTO.getUserEmail())) {
+            return null;
+        }
+        if (isNicknameTaken(userDTO.getNickname())) {
+            return null;
+        }
+
         UserEntity userEntity = UserEntity.toUserEntity(userDTO);
         return userRepository.save(userEntity);
     }
 
-    public UserEntity getUserByEmail(String userEmail) {
-        return userRepository.findByUserEmail(userEmail);
+    public UserDTO getUserByEmail(String email) {
+        UserEntity userEntity = userRepository.findByUserEmail(email).orElse(null);
+        if (userEntity != null) {
+            return UserDTO.toUserDTO(userEntity);
+        }
+        return null;
     }
+
+    //이메일,닉네임 중복처리
+    public boolean isEmailTaken(String email){
+        Optional<UserEntity> user=userRepository.findByUserEmail(email);
+        return user.isPresent();
+    }
+    public boolean isNicknameTaken(String nickname) {
+        Optional<UserEntity> user = userRepository.findByNickname(nickname);
+        return user.isPresent();
+    }
+
 
 }

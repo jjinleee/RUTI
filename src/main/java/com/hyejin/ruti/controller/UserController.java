@@ -5,6 +5,8 @@ import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,16 +24,32 @@ public class UserController {
     } //생략가능
 
     @PostMapping("/join")
-    public UserEntity createUser(@RequestBody UserDTO userDTO) {
-        return userService.saveUser(userDTO);
+    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
+        UserEntity userEntity = userService.saveUser(userDTO);
+        if (userEntity == null) {
+            if (userService.isEmailTaken(userDTO.getUserEmail())) {
+                return new ResponseEntity<>("이미 존재하는 이메일입니다.", HttpStatus.CONFLICT);
+            } else if (userService.isNicknameTaken(userDTO.getNickname())) {
+                return new ResponseEntity<>("이미 존재하는 닉네임입니다.", HttpStatus.CONFLICT);
+            }
+        }
+        return new ResponseEntity<>(userEntity, HttpStatus.CREATED);
+    }
+    //이메일중복, 닉네임중복확인
+    @GetMapping("/check-email")
+    public boolean checkEmail(@RequestParam("email") String email) {
+        return userService.isEmailTaken(email);
     }
 
-    //이메일중복, 닉네임중복확인
+    @GetMapping("/check-nickname")
+    public boolean checkNickname(@RequestParam("nickname") String nickname) {
+        return userService.isNicknameTaken(nickname);
+    }
 
 
     //이메일로 회원찾기
     @GetMapping("/{email}")
-    public UserEntity getUserByEmail(@PathVariable("email") String email) {
+    public UserDTO getUserByEmail(@PathVariable("email") String email) {
         return userService.getUserByEmail(email);
     }
 
