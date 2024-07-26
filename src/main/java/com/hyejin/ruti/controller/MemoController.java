@@ -6,6 +6,7 @@ import com.hyejin.ruti.service.MemoService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,14 +19,20 @@ public class MemoController {
     private final MemoService memoService;
 
     @PostMapping("/add")
-    public MemoEntity save(@RequestBody MemoDTO memoDTO, HttpSession session) {
-        String userEmail = (String) session.getAttribute("loginEmail");
-        if (userEmail == null) {
-            throw new IllegalStateException("User not logged in");
+    public ResponseEntity<?> save(@RequestBody MemoDTO memoDTO, HttpSession session) {
+        try {
+            String userEmail = (String) session.getAttribute("loggedInUserEmail");
+            if (userEmail == null) {
+                throw new IllegalStateException("User not logged in");
+            }
+            MemoEntity memoEntity = memoService.saveMemo(memoDTO, userEmail);
+            return ResponseEntity.ok(memoEntity);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(401).body("User not logged in");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Internal Server Error: " + e.getMessage());
         }
-        return memoService.saveMemo(memoDTO, userEmail);
     }
-
     @GetMapping("/")
     public List<MemoDTO> findAll(HttpSession session) {
         String userEmail = (String) session.getAttribute("loginEmail");
@@ -45,13 +52,18 @@ public class MemoController {
     }
 
     @PutMapping("/update/{id}")
-    public MemoEntity update(@PathVariable Long id, @RequestBody MemoDTO memoDTO) {
+    public MemoEntity update(@PathVariable("id") Long id, @RequestBody MemoDTO memoDTO) {
         return memoService.updateMemo(id, memoDTO);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Long id) {
-        memoService.deleteMemo(id);
+    public ResponseEntity<?> deleteMemo(@PathVariable("id") Long id) {
+        try {
+            memoService.deleteMemo(id);
+            return ResponseEntity.ok("Memo deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Internal Server Error: " + e.getMessage());
+        }
     }
 }
 
