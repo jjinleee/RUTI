@@ -23,3 +23,12 @@ spring:
 
   mvc:
     static-path-pattern: /**
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 974671723855-5oos06h4042969udis1r5urtuvbh15iv.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile,email
