@@ -8,7 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -62,4 +66,21 @@ public class UserController {
         }else {
             return ResponseEntity.status(401).body("이메일 또는 비밀번호가 올바르지 않습니다.");        }
     }
+
+//구글로그인
+//    @PostMapping("/oauth2/callback")
+//    public ResponseEntity<Object> googleLogin(@RequestBody Map<String, String> requestBody, HttpSession session) {
+//        String idTokenString = requestBody.get("token");
+//        OidcUser oidcUser = userService.verifyGoogleToken(idTokenString);
+//
+//        if (oidcUser != null) {
+//            String email = oidcUser.getEmail();
+//            String name = oidcUser.getFullName();
+//            UserDTO user = userService.processOAuthPostLogin(email, name);
+//            session.setAttribute("loginEmail", user.getUserEmail());
+//            return ResponseEntity.status(HttpStatus.OK).body(Collections.singletonMap("success", true));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("success", false));
+//        }
+//    }
 }
