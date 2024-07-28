@@ -86,4 +86,18 @@ public class UserService {
 //        }
 //    }
 
+    public boolean changeNickname(String oldNickname, String newNickname) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByNickname(oldNickname);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            if (isNicknameTaken(newNickname)) {
+                return false; // 닉네임 중복 확인 실패
+            }
+            userEntity.setNickname(newNickname);
+            userRepository.save(userEntity);
+            return true; // 닉네임 변경 성공
+        } else {
+            return false; // 기존 닉네임을 찾지 못함
+        }
+    }
 }

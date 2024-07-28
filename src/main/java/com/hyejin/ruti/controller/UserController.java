@@ -82,4 +82,18 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("success", false));
 //        }
 //    }
+
+    //닉네임 변경
+    @PostMapping("/change-nickname")
+    public ResponseEntity<?> changeNickname(@RequestBody Map<String, String> request) {
+        String oldNickname = request.get("oldNickname");
+        String newNickname = request.get("newNickname");
+        boolean isChanged = userService.changeNickname(oldNickname, newNickname);
+
+        if (isChanged) {
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
+        }
+    }
 }
