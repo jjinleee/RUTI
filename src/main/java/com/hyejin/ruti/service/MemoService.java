@@ -22,6 +22,10 @@ public class MemoService {
         UserEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        if (memoDTO.getMemoContent() == null || memoDTO.getMemoContent().isEmpty()) {
+            throw new IllegalArgumentException("Memo content is required");
+        }
+
         MemoEntity memo = new MemoEntity();
         memo.setMemoWriter(user.getNickname());
         memo.setMemoContent(memoDTO.getMemoContent());
@@ -47,7 +51,6 @@ public class MemoService {
     public List<MemoDTO> searchByContent(String keyword, String userEmail) {
         UserEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
         List<MemoEntity> memoEntityList = memoRepository.findByMemoContentContainingAndMemoWriter(keyword, user.getNickname());
         List<MemoDTO> memoDTOList = new ArrayList<>();
         for (MemoEntity memoEntity : memoEntityList) {
