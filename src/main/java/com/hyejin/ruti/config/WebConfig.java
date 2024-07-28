@@ -17,6 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
                         .allowedOrigins("http://localhost:3000") // 클라이언트의 URL
                         .allowedMethods("*")
                         .allowCredentials(true); // 쿠키와 인증 정보 전송 허용
+
             }
         };
     }
