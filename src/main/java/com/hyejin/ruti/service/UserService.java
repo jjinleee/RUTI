@@ -86,8 +86,8 @@ public class UserService {
 //        }
 //    }
 
-    public boolean changeNickname(String oldNickname, String newNickname) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByNickname(oldNickname);
+    public boolean changeNickname(String userEmail, String newNickname) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserEmail(userEmail);
         if (userEntityOptional.isPresent()) {
             UserEntity userEntity = userEntityOptional.get();
             if (isNicknameTaken(newNickname)) {

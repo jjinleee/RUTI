@@ -84,11 +84,23 @@ public class UserController {
 //    }
 
     //닉네임 변경
+    @GetMapping("/current-nickname")
+    public ResponseEntity<?> getCurrentNickname(HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail != null) {
+            UserDTO userDTO = userService.getUserByEmail(userEmail);
+            if (userDTO != null) {
+                return ResponseEntity.ok(Collections.singletonMap("nickname", userDTO.getNickname()));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자가 로그인되어 있지 않습니다.");
+    }
+
     @PostMapping("/change-nickname")
-    public ResponseEntity<?> changeNickname(@RequestBody Map<String, String> request) {
-        String oldNickname = request.get("oldNickname");
+    public ResponseEntity<?> changeNickname(@RequestBody Map<String, String> request, HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
         String newNickname = request.get("newNickname");
-        boolean isChanged = userService.changeNickname(oldNickname, newNickname);
+        boolean isChanged = userService.changeNickname(userEmail, newNickname);
 
         if (isChanged) {
             return ResponseEntity.ok(Collections.singletonMap("success", true));
@@ -96,4 +108,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
         }
     }
+    //비번 변경
+
 }
