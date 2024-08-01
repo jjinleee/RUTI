@@ -109,5 +109,30 @@ public class UserController {
         }
     }
     //비번 변경
+    @PostMapping("/check-pw")
+    public ResponseEntity<Boolean> checkPw(@RequestBody Map<String, String> request, HttpSession session) {
+        String email = (String) session.getAttribute("loginEmail");
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+        String currentPassword = request.get("currentPassword");
+        boolean isValid = userService.checkPw(email, currentPassword);
+        return ResponseEntity.ok(isValid);
+    }
 
+    @PostMapping("/change-pw")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request, HttpSession session) {
+        String email = (String) session.getAttribute("loginEmail");
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+        String newPassword = request.get("newPassword");
+        boolean isChanged = userService.changePw(email, newPassword);
+
+        if (isChanged) {
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
+        }
+    }
 }
