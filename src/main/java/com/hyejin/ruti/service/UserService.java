@@ -100,4 +100,24 @@ public class UserService {
             return false; // 기존 닉네임을 찾지 못함
         }
     }
+
+    public boolean checkPw(String userEmail, String currentPassword) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserEmail(userEmail);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            return userEntity.getUserPW().equals(currentPassword);
+        }
+        return false;
+    }
+
+    public boolean changePw(String userEmail, String newPassword) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserEmail(userEmail);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setUserPW(newPassword);
+            userRepository.save(userEntity);
+            return true;
+        }
+        return false;
+    }
 }
