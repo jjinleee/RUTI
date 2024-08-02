@@ -120,4 +120,16 @@ public class UserService {
         }
         return false;
     }
+
+    public boolean deleteUser(String email, String password){
+        Optional<UserEntity> userEntityOptional=userRepository.findByUserEmail(email);
+        if(userEntityOptional.isPresent()){
+            UserEntity userEntity=userEntityOptional.get();
+            if(userEntity.getUserPW().equals(password)){
+                userRepository.delete(userEntity);
+                return true;
+            }
+        }
+        return false;
+    }
 }

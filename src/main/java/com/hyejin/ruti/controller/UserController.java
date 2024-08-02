@@ -3,6 +3,9 @@ package com.hyejin.ruti.controller;
 import com.hyejin.ruti.dto.UserDTO;
 import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.service.UserService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +136,33 @@ public class UserController {
             return ResponseEntity.ok(Collections.singletonMap("success", true));
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
+        }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
+        HttpSession session= request.getSession(false);
+        if(session!=null){
+            session.invalidate();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestBody Map<String,String> requset, HttpSession session){
+        String email=requset.get("email");
+        String password=requset.get("password");
+
+        if(email==null || email.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("messsage","해당 이메일이 없습니다"));
+        }
+        boolean isDeleted= userService.deleteUser(email,password);
+
+        if(isDeleted){
+            session.invalidate();
+            return ResponseEntity.ok(Collections.singletonMap("success",true));
+        } else{
+            String errorMessage=userService.isEmailTaken(email)? "비밀번호가 올바르지 않습니다." : "존재하지 않는 이메일입니다.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", errorMessage));
         }
     }
 }
