@@ -3,6 +3,9 @@ package com.hyejin.ruti.controller;
 import com.hyejin.ruti.dto.UserDTO;
 import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.service.UserService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,5 +137,13 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
         }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
+        HttpSession session= request.getSession(false);
+        if(session!=null){
+            session.invalidate();
+        }
+        return ResponseEntity.ok().build();
     }
 }
