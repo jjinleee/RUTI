@@ -86,4 +86,38 @@ public class UserService {
 //        }
 //    }
 
+    public boolean changeNickname(String userEmail, String newNickname) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserEmail(userEmail);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            if (isNicknameTaken(newNickname)) {
+                return false; // 닉네임 중복 확인 실패
+            }
+            userEntity.setNickname(newNickname);
+            userRepository.save(userEntity);
+            return true; // 닉네임 변경 성공
+        } else {
+            return false; // 기존 닉네임을 찾지 못함
+        }
+    }
+
+    public boolean checkPw(String userEmail, String currentPassword) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserEmail(userEmail);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            return userEntity.getUserPW().equals(currentPassword);
+        }
+        return false;
+    }
+
+    public boolean changePw(String userEmail, String newPassword) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUserEmail(userEmail);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setUserPW(newPassword);
+            userRepository.save(userEntity);
+            return true;
+        }
+        return false;
+    }
 }
