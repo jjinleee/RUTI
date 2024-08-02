@@ -82,4 +82,57 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("success", false));
 //        }
 //    }
+
+    //닉네임 변경
+    @GetMapping("/current-nickname")
+    public ResponseEntity<?> getCurrentNickname(HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail != null) {
+            UserDTO userDTO = userService.getUserByEmail(userEmail);
+            if (userDTO != null) {
+                return ResponseEntity.ok(Collections.singletonMap("nickname", userDTO.getNickname()));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자가 로그인되어 있지 않습니다.");
+    }
+
+    @PostMapping("/change-nickname")
+    public ResponseEntity<?> changeNickname(@RequestBody Map<String, String> request, HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        String newNickname = request.get("newNickname");
+        boolean isChanged = userService.changeNickname(userEmail, newNickname);
+
+        if (isChanged) {
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
+        }
+    }
+    //비번 변경
+    @PostMapping("/check-pw")
+    public ResponseEntity<Boolean> checkPw(@RequestBody Map<String, String> request, HttpSession session) {
+        String email = (String) session.getAttribute("loginEmail");
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+        String currentPassword = request.get("currentPassword");
+        boolean isValid = userService.checkPw(email, currentPassword);
+        return ResponseEntity.ok(isValid);
+    }
+
+    @PostMapping("/change-pw")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request, HttpSession session) {
+        String email = (String) session.getAttribute("loginEmail");
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+        String newPassword = request.get("newPassword");
+        boolean isChanged = userService.changePw(email, newPassword);
+
+        if (isChanged) {
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("success", false));
+        }
+    }
 }
