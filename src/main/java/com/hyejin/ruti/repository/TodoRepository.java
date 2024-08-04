@@ -11,7 +11,9 @@ import java.util.List;
 @Repository
 public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
 
-    List<TodoEntity> findByDate(String date);
+    List<TodoEntity> findByDateAndUserEmail(String date, String userEmail);
+
+    List<TodoEntity> findByUserEmail(String userEmail);
 
     @Transactional
     @Modifying

@@ -19,27 +19,30 @@ public class CategoryService {
     @Autowired
     private TodoRepository todoRepository;
 
-    public List<CategoryDTO> getAllCategories() {
-        List<CategoryEntity> categories = categoryRepository.findAll();
+    public List<CategoryDTO> getAllCategories(String userEmail) {
+        List<CategoryEntity> categories = categoryRepository.findByUserEmail(userEmail);
         return categories.stream()
                 .map(CategoryDTO::toCategoryDTO)
                 .collect(Collectors.toList());
     }
 
-    public CategoryDTO getCategoryById(Long categoryId) {
-        CategoryEntity categoryEntity = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+    public CategoryDTO getCategoryById(Long categoryId, String userEmail) {
+        CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
+                .filter(category -> category.getUserEmail().equals(userEmail))
+                .orElseThrow(() -> new RuntimeException("Category not found"));
         return CategoryDTO.toCategoryDTO(categoryEntity);
     }
 
-    public CategoryDTO saveCategory(CategoryDTO categoryDTO) {
-        CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setCategory(categoryDTO.getCategory());
-        categoryEntity.setCategoryColor(categoryDTO.getCategoryColor());
+    public CategoryDTO saveCategory(CategoryDTO categoryDTO, String userEmail) {
+        CategoryEntity categoryEntity = CategoryEntity.toCategoryEntity(categoryDTO, userEmail);
         CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
         return CategoryDTO.toCategoryDTO(savedEntity);
     }
 
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategory(Long categoryId, String userEmail) {
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .filter(cat -> cat.getUserEmail().equals(userEmail))
+                .orElseThrow(() -> new RuntimeException("Category not found"));
         todoRepository.deleteByCategoryId(categoryId);
         categoryRepository.deleteById(categoryId);
     }

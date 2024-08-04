@@ -20,38 +20,35 @@ public class TodoService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public List<TodoDTO> getTodosByDate(String date) {
-        List<TodoEntity> todos = todoRepository.findByDate(date);
+    public List<TodoDTO> getTodosByDate(String date, String userEmail) {
+        List<TodoEntity> todos = todoRepository.findByDateAndUserEmail(date, userEmail);
         return todos.stream()
                 .map(TodoDTO::toTodoDTO)
                 .collect(Collectors.toList());
     }
 
-    public TodoDTO saveTodo(TodoDTO todoDTO) {
-        TodoEntity todoEntity = new TodoEntity();
-        todoEntity.setTodoContent(todoDTO.getTodoContent());
-        todoEntity.setDate(todoDTO.getDate());
-        todoEntity.setCompleted(todoDTO.isCompleted());
+    public TodoDTO saveTodo(TodoDTO todoDTO, String userEmail) {
         CategoryEntity categoryEntity = categoryRepository.findById(todoDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
-        todoEntity.setCategoryId(categoryEntity);
+        TodoEntity todoEntity = TodoEntity.toTodoEntity(todoDTO, categoryEntity, userEmail);
         TodoEntity savedEntity = todoRepository.save(todoEntity);
         return TodoDTO.toTodoDTO(savedEntity);
     }
 
-    public TodoDTO updateTodo(Long todoId, TodoDTO todoDTO) {
-        TodoEntity todoEntity = todoRepository.findById(todoId).orElseThrow(() -> new RuntimeException("Todo not found"));
+    public TodoDTO updateTodo(Long todoId, TodoDTO todoDTO, String userEmail) {
+        TodoEntity todoEntity = todoRepository.findById(todoId)
+                .filter(todo -> todo.getUserEmail().equals(userEmail))
+                .orElseThrow(() -> new RuntimeException("Todo not found"));
         todoEntity.setCompleted(todoDTO.isCompleted());
         TodoEntity updatedEntity = todoRepository.save(todoEntity);
         return TodoDTO.toTodoDTO(updatedEntity);
     }
 
-    public void deleteTodo(Long todoId) {
-        if (todoRepository.existsById(todoId)) {
-            todoRepository.deleteById(todoId);
-        } else {
-            throw new RuntimeException("Todo not found");
-        }
+    public void deleteTodo(Long todoId, String userEmail) {
+        TodoEntity todoEntity = todoRepository.findById(todoId)
+                .filter(todo -> todo.getUserEmail().equals(userEmail))
+                .orElseThrow(() -> new RuntimeException("Todo not found"));
+        todoRepository.delete(todoEntity);
     }
 
 }
