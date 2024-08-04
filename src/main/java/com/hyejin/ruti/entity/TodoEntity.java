@@ -1,5 +1,6 @@
 package com.hyejin.ruti.entity;
 
+import com.hyejin.ruti.dto.TodoDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,21 @@ public class TodoEntity {
     @Column
     private boolean completed;
 
+    @Column
+    private String userEmail;
+
     @ManyToOne
     @JoinColumn(name="category_id")
     private CategoryEntity categoryId;
+
+    public static TodoEntity toTodoEntity(TodoDTO todoDTO, CategoryEntity categoryEntity, String userEmail) {
+        TodoEntity todoEntity = new TodoEntity();
+        todoEntity.setId(todoDTO.getId());
+        todoEntity.setTodoContent(todoDTO.getTodoContent());
+        todoEntity.setDate(todoDTO.getDate());
+        todoEntity.setCompleted(todoDTO.isCompleted());
+        todoEntity.setUserEmail(userEmail);
+        todoEntity.setCategoryId(categoryEntity);
+        return todoEntity;
+    }
 }
