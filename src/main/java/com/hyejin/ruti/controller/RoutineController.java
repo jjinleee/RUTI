@@ -27,7 +27,7 @@ public class RoutineController {
         return ResponseEntity.ok(routines);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/new")
     public ResponseEntity<?> addRoutine(@RequestBody RoutineDTO routineDTO, HttpSession session) {
         String userEmail = (String) session.getAttribute("loginEmail");
         if (userEmail == null) {
