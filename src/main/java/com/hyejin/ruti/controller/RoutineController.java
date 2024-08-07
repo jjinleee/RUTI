@@ -20,6 +20,16 @@ public class RoutineController {
 
     @Autowired
     private final RoutineService routineService;
+    @GetMapping
+    public ResponseEntity<List<RoutineEntity>> getRoutines(HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail != null) {
+            List<RoutineEntity> routines = routineService.getRoutines(userEmail);
+            return ResponseEntity.ok(routines);
+        } else {
+            return ResponseEntity.status(401).build();
+        }
+    }
 
     @GetMapping("/{userEmail}")
     public ResponseEntity<List<RoutineEntity>> getRoutines(@PathVariable String userEmail) {
