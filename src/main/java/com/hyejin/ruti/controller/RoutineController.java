@@ -30,12 +30,21 @@ public class RoutineController {
             return ResponseEntity.status(401).build();
         }
     }
-
-    @GetMapping("/{userEmail}")
-    public ResponseEntity<List<RoutineEntity>> getRoutines(@PathVariable String userEmail) {
-        List<RoutineEntity> routines = routineService.getRoutines(userEmail);
-        return ResponseEntity.ok(routines);
+    @GetMapping("/{id}")
+    public ResponseEntity<RoutineEntity> getRoutineById(@PathVariable Long id) {
+        RoutineEntity routine = routineService.getRoutineById(id);
+        if (routine != null) {
+            return ResponseEntity.ok(routine);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
+
+//    @GetMapping("/{userEmail}")
+//    public ResponseEntity<List<RoutineEntity>> getRoutines(@PathVariable String userEmail) {
+//        List<RoutineEntity> routines = routineService.getRoutines(userEmail);
+//        return ResponseEntity.ok(routines);
+//    }
 
     @PostMapping("/new")
     public ResponseEntity<?> addRoutine(@RequestBody RoutineDTO routineDTO, HttpSession session) {

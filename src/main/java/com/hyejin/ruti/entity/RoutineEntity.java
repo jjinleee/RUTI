@@ -18,16 +18,16 @@ public class RoutineEntity {
     private String title;
 
     @Column(nullable = false)
+    private String startDate;
+
+    @Column(nullable = false)
+    private String endDate;
+
+    @Column(nullable = false)
     private String time;
 
-    @Column
-    private String duration;
-
     @Column(nullable = false)
-    private String status;
-
-    @Column(nullable = false)
-    private String frequency;
+    private String activeDays;
 
     @Column(nullable = false)
     private String userEmail;
@@ -35,10 +35,11 @@ public class RoutineEntity {
     public static RoutineEntity toRoutineEntity(RoutineDTO routineDTO, String userEmail) {
         RoutineEntity routineEntity = new RoutineEntity();
         routineEntity.setTitle(routineDTO.getTitle());
+        routineEntity.setStartDate(routineDTO.getStartDate());
+        routineEntity.setEndDate(routineDTO.getEndDate());
         routineEntity.setTime(routineDTO.getTime());
-        routineEntity.setDuration(routineDTO.getDuration());
-        routineEntity.setStatus(routineDTO.getStatus());
-        routineEntity.setFrequency(routineDTO.getFrequency());
+        routineEntity.setActiveDays(routineDTO.getActiveDays());
         routineEntity.setUserEmail(userEmail);
         return routineEntity;
-    }}
+    }
+}

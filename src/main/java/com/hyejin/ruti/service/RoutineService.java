@@ -27,18 +27,15 @@ public class RoutineService {
     }
 
     public boolean updateRoutine(Long id, RoutineDTO routineDTO) {
-        Optional<RoutineEntity> routineEntityOptional = routineRepository.findById(id);
-        if (routineEntityOptional.isPresent()) {
-            RoutineEntity routineEntity = routineEntityOptional.get();
+        return routineRepository.findById(id).map(routineEntity -> {
             routineEntity.setTitle(routineDTO.getTitle());
+            routineEntity.setStartDate(routineDTO.getStartDate());
+            routineEntity.setEndDate(routineDTO.getEndDate());
             routineEntity.setTime(routineDTO.getTime());
-            routineEntity.setDuration(routineDTO.getDuration());
-            routineEntity.setStatus(routineDTO.getStatus());
-            routineEntity.setFrequency(routineDTO.getFrequency());
+            routineEntity.setActiveDays(routineDTO.getActiveDays());
             routineRepository.save(routineEntity);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public boolean deleteRoutine(Long id) {
@@ -48,5 +45,9 @@ public class RoutineService {
             return true;
         }
         return false;
+    }
+
+    public RoutineEntity getRoutineById(Long id) {
+        return routineRepository.findById(id).orElse(null);
     }
 }
