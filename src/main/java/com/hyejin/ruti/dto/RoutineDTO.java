@@ -7,8 +7,8 @@ import lombok.Setter;
 @Setter
 public class RoutineDTO {
     private String title;
+    private String startDate;
+    private String endDate;
     private String time;
-    private String duration;
-    private String status;
-    private String frequency;
+    private String activeDays;
 }
