@@ -34,4 +34,8 @@ public class CategoryEntity {
         categoryEntity.setUserEmail(userEmail);
         return categoryEntity;
     }
+
+    public String getCategoryName() {
+        return this.category;
+    }
 }

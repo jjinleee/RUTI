@@ -13,6 +13,8 @@ public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
 
     List<TodoEntity> findByDateAndUserEmail(String date, String userEmail);
 
+    List<TodoEntity> findByCategoryId_IdAndUserEmail(Long categoryId, String userEmail);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM TodoEntity t WHERE t.categoryId.id = ?1")
