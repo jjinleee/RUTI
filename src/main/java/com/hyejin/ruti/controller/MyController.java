@@ -30,4 +30,15 @@ public class MyController {
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
+    @GetMapping("/todo/{year}/{month}")
+    public ResponseEntity<Map<String, Object>> getMonthlyTodoStats(@PathVariable int year, @PathVariable int month, HttpSession session) {
+        String userEmail = (String) session.getAttribute("loginEmail");
+        if (userEmail == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Map<String, Object> stats = todoService.getMonthlyTodoStatistics(userEmail, year, month);
+        return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+
 }

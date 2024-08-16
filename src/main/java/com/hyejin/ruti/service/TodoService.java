@@ -72,4 +72,33 @@ public class TodoService {
         return stats;
     }
 
+    public Map<String, Object> getMonthlyTodoStatistics(String userEmail, int year, int month) {
+        List<CategoryEntity> categories = categoryRepository.findByUserEmail(userEmail);
+        Map<String, Object> stats = new HashMap<>();
+
+        for (CategoryEntity category : categories) {
+            List<TodoEntity> todos = todoRepository.findByCategoryId_IdAndUserEmail(category.getId(), userEmail)
+                    .stream()
+                    .filter(todo -> {
+                        String[] dateParts = todo.getDate().split("-");
+                        int todoYear = Integer.parseInt(dateParts[0]);
+                        int todoMonth = Integer.parseInt(dateParts[1]);
+                        return todoYear == year && todoMonth == month;
+                    })
+                    .collect(Collectors.toList());
+
+            long completedCount = todos.stream().filter(TodoEntity::isCompleted).count();
+            long totalCount = todos.size();
+
+            Map<String, Long> categoryStats = new HashMap<>();
+            categoryStats.put("completed", completedCount);
+            categoryStats.put("total", totalCount);
+
+            stats.put(category.getCategoryName(), categoryStats);
+        }
+
+        return stats;
+    }
+
+
 }
