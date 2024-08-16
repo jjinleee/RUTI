@@ -19,7 +19,7 @@ public class TodoDTO {
         todoDTO.setTodoContent(todoEntity.getTodoContent());
         todoDTO.setDate(todoEntity.getDate());
         todoDTO.setCategoryId(todoEntity.getCategoryId() != null ? todoEntity.getCategoryId().getId() : null);
-        todoDTO.setCompleted(todoEntity.isCompleted());  // 추가된 필드
+        todoDTO.setCompleted(todoEntity.isCompleted());
         return todoDTO;
     }
 }
