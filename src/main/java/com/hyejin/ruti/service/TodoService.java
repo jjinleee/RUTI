@@ -8,8 +8,10 @@ import com.hyejin.ruti.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 public class TodoService {
@@ -50,5 +52,53 @@ public class TodoService {
                 .orElseThrow(() -> new RuntimeException("Todo not found"));
         todoRepository.delete(todoEntity);
     }
+
+    public Map<String, Object> getTodoStatistics(String userEmail) {
+        List<CategoryEntity> categories = categoryRepository.findByUserEmail(userEmail);
+        Map<String, Object> stats = new HashMap<>();
+
+        for (CategoryEntity category : categories) {
+            List<TodoEntity> todos = todoRepository.findByCategoryId_IdAndUserEmail(category.getId(), userEmail);
+            long completedCount = todos.stream().filter(TodoEntity::isCompleted).count();
+            long totalCount = todos.size();
+
+            Map<String, Long> categoryStats = new HashMap<>();
+            categoryStats.put("completed", completedCount);
+            categoryStats.put("total", totalCount);
+
+            stats.put(category.getCategoryName(), categoryStats);
+        }
+
+        return stats;
+    }
+
+    public Map<String, Object> getMonthlyTodoStatistics(String userEmail, int year, int month) {
+        List<CategoryEntity> categories = categoryRepository.findByUserEmail(userEmail);
+        Map<String, Object> stats = new HashMap<>();
+
+        for (CategoryEntity category : categories) {
+            List<TodoEntity> todos = todoRepository.findByCategoryId_IdAndUserEmail(category.getId(), userEmail)
+                    .stream()
+                    .filter(todo -> {
+                        String[] dateParts = todo.getDate().split("-");
+                        int todoYear = Integer.parseInt(dateParts[0]);
+                        int todoMonth = Integer.parseInt(dateParts[1]);
+                        return todoYear == year && todoMonth == month;
+                    })
+                    .collect(Collectors.toList());
+
+            long completedCount = todos.stream().filter(TodoEntity::isCompleted).count();
+            long totalCount = todos.size();
+
+            Map<String, Long> categoryStats = new HashMap<>();
+            categoryStats.put("completed", completedCount);
+            categoryStats.put("total", totalCount);
+
+            stats.put(category.getCategoryName(), categoryStats);
+        }
+
+        return stats;
+    }
+
 
 }
