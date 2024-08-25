@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/routine")
@@ -59,6 +60,17 @@ public class RoutineController {
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateRoutine(@PathVariable Long id, @RequestBody RoutineDTO routineDTO) {
         boolean isUpdated = routineService.updateRoutine(id, routineDTO);
+        if (isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("success", false));
+        }
+    }
+
+    @PutMapping("/updateState/{id}")
+    public ResponseEntity<?> updateRoutineState(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+        String newState = requestBody.get("state");
+        boolean isUpdated = routineService.updateRoutineState(id, newState);
         if (isUpdated) {
             return ResponseEntity.ok(Collections.singletonMap("success", true));
         } else {

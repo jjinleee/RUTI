@@ -11,4 +11,5 @@ public class RoutineDTO {
     private String endDate;
     private String time;
     private String activeDays;
+    private String state;
 }

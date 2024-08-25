@@ -32,6 +32,9 @@ public class RoutineEntity {
     @Column(nullable = false)
     private String userEmail;
 
+    @Column(nullable = false)
+    private String state = "pending";
+
     public static RoutineEntity toRoutineEntity(RoutineDTO routineDTO, String userEmail) {
         RoutineEntity routineEntity = new RoutineEntity();
         routineEntity.setTitle(routineDTO.getTitle());
@@ -40,6 +43,7 @@ public class RoutineEntity {
         routineEntity.setTime(routineDTO.getTime());
         routineEntity.setActiveDays(routineDTO.getActiveDays());
         routineEntity.setUserEmail(userEmail);
+        routineEntity.setState(routineDTO.getState() != null ? routineDTO.getState() : "pending");  // state가 전달되지 않으면 기본값 사용
         return routineEntity;
     }
 }
