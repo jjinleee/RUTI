@@ -37,6 +37,13 @@ public class RoutineService {
             return true;
         }).orElse(false);
     }
+    public boolean updateRoutineState(Long id, String state) {
+        return routineRepository.findById(id).map(routineEntity -> {
+            routineEntity.setState(state);
+            routineRepository.save(routineEntity);
+            return true;
+        }).orElse(false);
+    }
 
     public boolean deleteRoutine(Long id) {
         Optional<RoutineEntity> routineEntityOptional = routineRepository.findById(id);
