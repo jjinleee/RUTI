@@ -3,8 +3,10 @@ package com.hyejin.ruti.service;
 import com.hyejin.ruti.dto.TodoDTO;
 import com.hyejin.ruti.entity.CategoryEntity;
 import com.hyejin.ruti.entity.TodoEntity;
+import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.repository.CategoryRepository;
 import com.hyejin.ruti.repository.TodoRepository;
+import com.hyejin.ruti.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,11 @@ public class TodoService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private UserService userService; // UserService 의존성 추가
+
+    @Autowired
+    private UserRepository userRepository; // UserRepository 의존성 추가
     public List<TodoDTO> getTodosByDate(String date, String userEmail) {
         List<TodoEntity> todos = todoRepository.findByDateAndUserEmail(date, userEmail);
         return todos.stream()
@@ -43,7 +50,33 @@ public class TodoService {
                 .orElseThrow(() -> new RuntimeException("Todo not found"));
         todoEntity.setCompleted(todoDTO.isCompleted());
         TodoEntity updatedEntity = todoRepository.save(todoEntity);
-        return TodoDTO.toTodoDTO(updatedEntity);
+
+        // 이전 상태와 변경 후 상태를 비교
+        boolean wasCompleted = todoEntity.isCompleted();
+        todoEntity.setCompleted(todoDTO.isCompleted());
+        todoRepository.save(todoEntity);
+
+        // 완료 상태가 바뀌었을 때만 레벨과 남은 개수를 업데이트
+        updateUserCompletedTodoCountAndBadge(userEmail);
+
+
+        return TodoDTO.toTodoDTO(todoEntity);
+    }
+
+    private void updateUserCompletedTodoCountAndBadge(String userEmail) {
+        // 사용자 정보 조회
+        UserEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 완료된 Todo 수 계산
+        int completedTodos = todoRepository.countByUserEmailAndCompleted(userEmail, true);
+        user.setCompletedTodoCount(completedTodos);
+
+        // 배지 레벨 업데이트
+        userService.updateBadgeLevel(user.getId());
+
+        // 업데이트된 사용자 정보 저장
+        userRepository.save(user);
     }
 
     public void deleteTodo(Long todoId, String userEmail) {
