@@ -37,7 +37,7 @@ public class UserEntity {
         userEntity.setUserEmail(userDTO.getUserEmail());
         userEntity.setUserPW(userDTO.getUserPW());
         userEntity.setNickname(userDTO.getNickname());
-        userEntity.setBadgeLevel(userDTO.getBadgeLevel());
+        userEntity.setBadgeLevel("Bronze 1");
         return userEntity;
     }
 }
