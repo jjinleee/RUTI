@@ -20,6 +20,8 @@ public class UserDTO {
     @NotBlank(message = "이메일을 입력하세요")
     private String userPW;
 
+    private int completedTodoCount;  // 추가된 필드
+    private String badgeLevel;  // 추
 
     // Entity를 DTO로 변환하는 메서드
     public static UserDTO toUserDTO(UserEntity userEntity) {
@@ -28,6 +30,8 @@ public class UserDTO {
         userDTO.setNickname(userEntity.getNickname());
         userDTO.setUserEmail(userEntity.getUserEmail());
         userDTO.setUserPW(userEntity.getUserPW());
+        userDTO.setCompletedTodoCount(userEntity.getCompletedTodoCount());  // 완료된 Todo 개수 필드 추가
+        userDTO.setBadgeLevel(userEntity.getBadgeLevel());
         return userDTO;
     }
 }
