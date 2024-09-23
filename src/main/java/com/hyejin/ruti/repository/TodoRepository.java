@@ -14,6 +14,7 @@ public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
     List<TodoEntity> findByDateAndUserEmail(String date, String userEmail);
 
     List<TodoEntity> findByCategoryId_IdAndUserEmail(Long categoryId, String userEmail);
+    int countByUserEmailAndCompleted(String userEmail, boolean completed);
 
     @Transactional
     @Modifying

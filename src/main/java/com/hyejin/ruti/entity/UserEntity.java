@@ -24,6 +24,12 @@ public class UserEntity {
     @Column
     private String userPW;
 
+    @Column(nullable = false)
+    private int completedTodoCount=0;
+
+    @Column(nullable = false)
+    private String badgeLevel="Bronze 1";
+
     // DTO를 Entity로 변환하는 메서드
     public static UserEntity toUserEntity(UserDTO userDTO){
         UserEntity userEntity=new UserEntity();
@@ -31,6 +37,7 @@ public class UserEntity {
         userEntity.setUserEmail(userDTO.getUserEmail());
         userEntity.setUserPW(userDTO.getUserPW());
         userEntity.setNickname(userDTO.getNickname());
+        userEntity.setBadgeLevel(userDTO.getBadgeLevel());
         return userEntity;
     }
 }
