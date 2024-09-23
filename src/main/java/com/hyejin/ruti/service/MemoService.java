@@ -27,7 +27,7 @@ public class MemoService {
         }
 
         MemoEntity memo = new MemoEntity();
-        memo.setMemoWriter(user.getNickname());
+        memo.setUser(user);
         memo.setMemoContent(memoDTO.getMemoContent());
         return memoRepository.save(memo);
     }
@@ -36,7 +36,7 @@ public class MemoService {
         UserEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        List<MemoEntity> memoEntityList = memoRepository.findByMemoWriter(user.getNickname());
+        List<MemoEntity> memoEntityList = memoRepository.findByUser(user);
         List<MemoDTO> memoDTOList = new ArrayList<>();
         for (MemoEntity memoEntity : memoEntityList) {
             memoDTOList.add(MemoDTO.toMemoDTO(memoEntity));
@@ -51,7 +51,7 @@ public class MemoService {
     public List<MemoDTO> searchByContent(String keyword, String userEmail) {
         UserEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<MemoEntity> memoEntityList = memoRepository.findByMemoContentContainingAndMemoWriter(keyword, user.getNickname());
+        List<MemoEntity> memoEntityList = memoRepository.findByMemoContentContainingAndUser(keyword, user); // 수정된 메서드 호출
         List<MemoDTO> memoDTOList = new ArrayList<>();
         for (MemoEntity memoEntity : memoEntityList) {
             memoDTOList.add(MemoDTO.toMemoDTO(memoEntity));
