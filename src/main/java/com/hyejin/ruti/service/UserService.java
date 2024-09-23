@@ -1,5 +1,6 @@
 package com.hyejin.ruti.service;
 
+import com.hyejin.ruti.dto.UserBadgeDTO;
 import com.hyejin.ruti.dto.UserDTO;
 import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.repository.UserRepository;
@@ -17,7 +18,8 @@ public class UserService {
 
     @Autowired
     private final UserRepository userRepository;
-//    @Autowired
+
+    //    @Autowired
 //    private ClientRegistrationRepository clientRegistrationRepository;
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
@@ -131,5 +133,75 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    //뱃지관리 로직
+    public UserBadgeDTO getUserBadgeInfo(Long userId) {
+        // 사용자의 완료된 할 일(Todo) 수 가져오기
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 배지레벨
+        int completedTodos = user.getCompletedTodoCount();
+        String badgeLevel = determineBadgeLevel(completedTodos);
+
+        if (!badgeLevel.equals(user.getBadgeLevel())) {
+            user.setBadgeLevel(badgeLevel);
+            userRepository.save(user); // 배지 레벨이 변경되면 업데이트
+        }
+        int todosUntilNextLevel = calculateTodosUntilNextLevel(completedTodos);
+
+        return new UserBadgeDTO(user.getNickname(),completedTodos, badgeLevel, todosUntilNextLevel);
+    }
+
+    public void updateBadgeLevel(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        int completedTodos = user.getCompletedTodoCount();
+        String badgeLevel = determineBadgeLevel(completedTodos);
+        user.setBadgeLevel(badgeLevel);
+        userRepository.save(user);
+    }
+
+    private String determineBadgeLevel(int completedTodos) {
+        if (completedTodos >= 371) return "Diamond 3";
+        else if (completedTodos >= 321) return "Diamond 2";
+        else if (completedTodos >= 271) return "Diamond 1";
+        else if (completedTodos >= 231) return "Gold 3";
+        else if (completedTodos >= 191) return "Gold 2";
+        else if (completedTodos >= 151) return "Gold 1";
+        else if (completedTodos >= 121) return "Silver 3";
+        else if (completedTodos >= 91) return "Silver 2";
+        else if (completedTodos >= 61) return "Silver 1";
+        else if (completedTodos >= 41) return "Bronze 3";
+        else if (completedTodos >= 21) return "Bronze 2";
+        else return "Bronze 1";
+    }
+
+    //다음 레벨까지 남은 todo 계산
+    private int calculateTodosUntilNextLevel(int completedTodos) {
+        if (completedTodos >= 371) {
+            return 0; // 최고 레벨에 도달한 경우
+        } else if (completedTodos >= 321) {
+            return 371 - completedTodos;
+        } else if (completedTodos >= 271) {
+            return 321 - completedTodos;
+        } else if (completedTodos >= 231) {
+            return 271 - completedTodos;
+        } else if (completedTodos >= 191) {
+            return 231 - completedTodos;
+        } else if (completedTodos >= 151) {
+            return 191 - completedTodos;
+        } else if (completedTodos >= 121) {
+            return 151 - completedTodos;
+        } else if (completedTodos >= 91) {
+            return 121 - completedTodos;
+        } else if (completedTodos >= 61) {
+            return 91 - completedTodos;
+        } else if (completedTodos >= 41) {
+            return 61 - completedTodos;
+        } else if (completedTodos >= 21) {
+            return 41 - completedTodos;
+        } else {
+            return 21 - completedTodos;
+        }
     }
 }
