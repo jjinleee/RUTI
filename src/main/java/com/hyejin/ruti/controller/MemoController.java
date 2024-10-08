@@ -63,7 +63,8 @@ public class MemoController {
     public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody MemoDTO memoDTO) {
         try {
             MemoEntity updatedMemo = memoService.updateMemo(id, memoDTO);
-            return ResponseEntity.ok(updatedMemo);
+            MemoDTO responseDTO = MemoDTO.toMemoDTO(updatedMemo);
+            return ResponseEntity.ok(responseDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body("Memo not found with id: " + id);
         } catch (Exception e) {
