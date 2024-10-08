@@ -24,6 +24,9 @@ spring:
   mvc:
     static-path-pattern: /**
 
+  firebase:
+    config: src/main/resources/firebase/ruti-fe604-firebase-adminsdk-34x9g-feee600823.json
+
 #  security:
 #    oauth2:
 #      client:
