@@ -204,4 +204,21 @@ public class UserService {
             return 21 - completedTodos;
         }
     }
+
+    public void updateFcmToken(String userEmail, String fcmToken) {
+        Optional<UserEntity> optionalUser = userRepository.findByUserEmail(userEmail);
+        if (optionalUser.isPresent()) {
+            UserEntity user = optionalUser.get();
+            user.setFcmToken(fcmToken); // FCM 토큰 설정
+            userRepository.save(user);  // 변경된 엔티티 저장
+            System.out.println("FCM 토큰이 업데이트되었습니다: " + fcmToken);
+        } else {
+            System.out.println("사용자를 찾을 수 없습니다. 이메일: " + userEmail);
+        }
+    }
+
+    public String getFcmToken(String userEmail) {
+        Optional<UserEntity> userOptional = userRepository.findByUserEmail(userEmail);
+        return userOptional.map(UserEntity::getFcmToken).orElse(null); // 값이 있으면 FCM 토큰을 반환, 없으면 null 반환
+    }
 }
