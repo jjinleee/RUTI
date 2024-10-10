@@ -165,4 +165,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", errorMessage));
         }
     }
+
+    @PostMapping("/updateFcmToken")
+    public String updateFcmToken(@RequestBody Map<String, String> tokenData) {
+        String userEmail = tokenData.get("userEmail");
+        String token = tokenData.get("token");
+        userService.updateFcmToken(userEmail, token);
+        return "FCM 토큰이 업데이트되었습니다.";
+    }
 }

@@ -30,6 +30,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String badgeLevel="Bronze 1";
 
+    @Column
+    private String fcmToken;
+
     // DTO를 Entity로 변환하는 메서드
     public static UserEntity toUserEntity(UserDTO userDTO){
         UserEntity userEntity=new UserEntity();
