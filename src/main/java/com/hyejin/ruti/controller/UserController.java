@@ -165,4 +165,38 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", errorMessage));
         }
     }
+    @PostMapping("/saveToken")
+    public ResponseEntity<String> saveToken(@RequestBody Map<String, String> tokenData, HttpSession session) {
+        String token = tokenData.get("token");
+        String email = (String) session.getAttribute("loginEmail");
+
+        // 로그 추가
+        System.out.println("Received token: " + token);
+        System.out.println("Session email: " + email);
+
+        if (token == null || email == null) {
+            System.out.println("Token or email is missing");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token or email is missing");
+        }
+
+        // FCM 토큰을 업데이트하는 서비스 호출
+        userService.updateFcmToken(email, token);
+        System.out.println("FCM 토큰이 업데이트되었습니다: " + token);
+        return ResponseEntity.ok("Token received and saved");
+    }
+
+    @PostMapping("/updateFcmToken")
+    public ResponseEntity<String> updateFcmToken(@RequestBody Map<String, String> tokenData, HttpSession session) {
+        String email = (String) session.getAttribute("loginEmail");
+        String token = tokenData.get("token");
+
+        if (email == null || token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token or email is missing");
+        }
+
+        userService.updateFcmToken(email, token);
+        System.out.println("FCM 토큰이 업데이트되었습니다: " + token);
+        return ResponseEntity.ok("FCM 토큰이 업데이트되었습니다.");
+    }
+
 }
