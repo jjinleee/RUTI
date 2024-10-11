@@ -20,4 +20,6 @@ public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
     @Modifying
     @Query("DELETE FROM TodoEntity t WHERE t.categoryId.id = ?1")
     void deleteByCategoryId(Long categoryId);
+
+    void deleteByUserEmail(String userEmail);
 }
