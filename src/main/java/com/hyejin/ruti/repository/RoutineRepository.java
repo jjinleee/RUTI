@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
     List<RoutineEntity> findByUserEmail(String userEmail);
     Optional<RoutineEntity> findByIdAndUserEmail(Long id, String userEmail);
+
+    void deleteByUserEmail(String userEmail);
 }

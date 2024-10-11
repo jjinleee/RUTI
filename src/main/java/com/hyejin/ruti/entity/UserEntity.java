@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Entity
 @Setter
 @Getter
@@ -32,6 +34,7 @@ public class UserEntity {
 
     @Column
     private String fcmToken;
+
 
     // DTO를 Entity로 변환하는 메서드
     public static UserEntity toUserEntity(UserDTO userDTO){
