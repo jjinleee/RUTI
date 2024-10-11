@@ -2,7 +2,6 @@ package com.hyejin.ruti.service;
 
 import com.hyejin.ruti.dto.MemoDTO;
 import com.hyejin.ruti.entity.MemoEntity;
-import com.hyejin.ruti.entity.UserEntity;
 import com.hyejin.ruti.repository.MemoRepository;
 import com.hyejin.ruti.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,24 +18,23 @@ public class MemoService {
     private final UserRepository userRepository;
 
     public MemoEntity saveMemo(MemoDTO memoDTO, String userEmail) {
-        UserEntity user = userRepository.findByUserEmail(userEmail)
+        userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // 메모 내용이 비어 있는지 확인
         if (memoDTO.getMemoContent() == null || memoDTO.getMemoContent().isEmpty()) {
             throw new IllegalArgumentException("Memo content is required");
         }
 
         MemoEntity memo = new MemoEntity();
-        memo.setUser(user);
+        memo.setUserEmail(userEmail); // userEmail을 직접 설정
         memo.setMemoContent(memoDTO.getMemoContent());
         return memoRepository.save(memo);
     }
 
     public List<MemoDTO> findAllByUser(String userEmail) {
-        UserEntity user = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        List<MemoEntity> memoEntityList = memoRepository.findByUser(user);
+        // userEmail을 사용해 메모를 조회
+        List<MemoEntity> memoEntityList = memoRepository.findByUserEmail(userEmail);
         List<MemoDTO> memoDTOList = new ArrayList<>();
         for (MemoEntity memoEntity : memoEntityList) {
             memoDTOList.add(MemoDTO.toMemoDTO(memoEntity));
@@ -49,9 +47,8 @@ public class MemoService {
     }
 
     public List<MemoDTO> searchByContent(String keyword, String userEmail) {
-        UserEntity user = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<MemoEntity> memoEntityList = memoRepository.findByMemoContentContainingAndUser(keyword, user); // 수정된 메서드 호출
+        // userEmail을 사용해 메모를 검색
+        List<MemoEntity> memoEntityList = memoRepository.findByMemoContentContainingAndUserEmail(keyword, userEmail);
         List<MemoDTO> memoDTOList = new ArrayList<>();
         for (MemoEntity memoEntity : memoEntityList) {
             memoDTOList.add(MemoDTO.toMemoDTO(memoEntity));
