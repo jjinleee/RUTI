@@ -20,8 +20,8 @@
 <br>
 
 ### ERD
+![erdRUTI](https://github.com/user-attachments/assets/041a4697-f9c1-4904-a9c5-a09c8a929ad7)
 <img src="https://github.com/jjinleee/RUTI/assets/93428123/af3f1de8-b235-4251-a0d5-37a5e95ed073" alt="Example Image" width="800">
-
 <br>
 <br>
 
