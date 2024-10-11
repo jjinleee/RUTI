@@ -23,7 +23,7 @@ public class TodoEntity {
     @Column
     private boolean completed;
 
-    @Column
+    @Column(nullable = false)
     private String userEmail;
 
     @ManyToOne

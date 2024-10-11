@@ -3,11 +3,13 @@ package com.hyejin.ruti.service;
 import com.hyejin.ruti.dto.UserBadgeDTO;
 import com.hyejin.ruti.dto.UserDTO;
 import com.hyejin.ruti.entity.UserEntity;
-import com.hyejin.ruti.repository.UserRepository;
+import com.hyejin.ruti.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.RowId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +20,15 @@ public class UserService {
 
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private final TodoRepository todoRepository;
+    @Autowired
+    private final CategoryRepository categoryRepository;
+    @Autowired
+    private final MemoRepository memoRepository;
+    @Autowired
+    private final RoutineRepository routineRepository;
+
 
     //    @Autowired
 //    private ClientRegistrationRepository clientRegistrationRepository;
@@ -123,16 +134,28 @@ public class UserService {
         return false;
     }
 
+    @Transactional
     public boolean deleteUser(String email, String password){
         Optional<UserEntity> userEntityOptional=userRepository.findByUserEmail(email);
         if(userEntityOptional.isPresent()){
             UserEntity userEntity=userEntityOptional.get();
             if(userEntity.getUserPW().equals(password)){
+                deleteRelatedData(userEntity.getUserEmail());
+
                 userRepository.delete(userEntity);
                 return true;
             }
         }
         return false;
+    }
+
+    @Transactional
+    public void deleteRelatedData(String userEmail) {
+        // userEmail을 외래 키로 사용하는 모든 엔티티를 삭제
+        memoRepository.deleteByUserEmail(userEmail);
+        todoRepository.deleteByUserEmail(userEmail);
+        routineRepository.deleteByUserEmail(userEmail);
+        categoryRepository.deleteByUserEmail(userEmail);
     }
 
     //뱃지관리 로직
