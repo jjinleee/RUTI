@@ -21,10 +21,10 @@ public class CategoryEntity {
     @Column
     private String categoryColor;
 
-    @Column
+    @Column(nullable = false)
     private String userEmail;
 
-    @OneToMany(mappedBy="categoryId")
+    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TodoEntity> todos;
 
     public static CategoryEntity toCategoryEntity(CategoryDTO categoryDTO, String userEmail) {

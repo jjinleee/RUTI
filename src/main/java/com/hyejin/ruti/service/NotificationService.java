@@ -74,8 +74,6 @@ public class NotificationService {
 
     @Scheduled(cron = "0 * * * * *") // 매 분마다 실행
     public void checkAndSendRoutineNotifications() {
-        System.out.println("스케줄러가 호출되었습니다.");
-
         LocalDate currentDate = LocalDate.now();
         String currentDay = currentDate.getDayOfWeek().name().toLowerCase(); // 현재 요일을 소문자로 변환
         String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
@@ -100,9 +98,7 @@ public class NotificationService {
                 } else {
                     System.out.println("유효하지 않은 FCM 토큰입니다. 알림을 보낼 수 없습니다.");
                 }
-                System.out.println("현재 시간: " + currentTime);
-                System.out.println("루틴 제목: " + routine.getTitle());
-                System.out.println("알림 전송 대상 토큰: " + targetToken);
+
             } else {
                 if (!activeDaysInEnglish.contains(currentDay)) {
                     System.out.println("요일 조건 불일치: " + currentDay + "는 활성화된 요일이 아닙니다.");
