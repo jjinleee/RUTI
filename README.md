@@ -15,12 +15,12 @@
 ## 설계
 
 ### Domain Model
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/e5940731-34f0-4209-8deb-7b7168c49887" alt="Example Image" width="500">
+<img width="500" alt="RUTI-domainModel" src="https://github.com/user-attachments/assets/394759a0-f4c2-499e-ad86-2e6e1743e089">
 
 <br>
 
 ### ERD
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/af3f1de8-b235-4251-a0d5-37a5e95ed073" alt="Example Image" width="800">
+![RUTI-ERD](https://github.com/user-attachments/assets/6583c04f-316d-4418-b327-15190766bf62)
 
 <br>
 <br>
@@ -30,9 +30,8 @@
 #### 회원가입/로그인
 <br>
 
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/e255d705-7d5e-4f2f-a57f-3e5514020341" alt="Example Image" width="200">
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/6900ce39-4ead-40e4-bd56-5b5cb2133029" alt="Example Image" width="200">
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/d66a3b8d-eab8-4d26-b164-efcd8161c8a7" width="200">
+<img src="https://github.com/user-attachments/assets/90e8d5a8-eb79-424e-914f-911210d15d42" alt="Example Image" width="200">
+<img src="https://github.com/user-attachments/assets/d4666a02-76ce-4318-9b39-1863702d63db" alt="Example Image" width="200">
 
 <br>
 
@@ -40,21 +39,19 @@
 <br>
 
 <img src="https://github.com/jjinleee/RUTI/assets/93428123/d05c6a7b-8401-4dcb-a1a2-86f353debdd2" alt="Example Image" width="200">
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/588ccd6b-fdd4-44f2-adb8-9b82e9ef5722" alt="Example Image" width="200">
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/8baaf7b6-3043-4f9b-9e16-b86d3b0838a9" width="200">
+<img src="https://github.com/user-attachments/assets/45d7e5c0-b89c-4a8b-a8a8-7af66a3c95bf" alt="Example Image" width="200">
+<img src="https://github.com/user-attachments/assets/a0f5e212-75df-470e-9187-8a892f42e869" width="200">
 
 <br>
 
 
 #### routine
 <br>
-
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/ca9589df-74f6-4074-87c3-d66c2d8d613b" alt="Example Image" width="200">
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/5a0bb350-4dd7-414a-9402-52f4559b9f56" alt="Example Image" width="140">
+<img src="https://github.com/user-attachments/assets/626e437e-6fda-4979-8a26-e35a49d1e10e" alt="Example Image" width="200">
+<img src="https://github.com/user-attachments/assets/b53a6e8e-822f-42d1-baff-c6c92f9b7576" width="200">
 <br>
-
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/82d817af-3593-4389-92c2-09d8d7c560b3" width="200">
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/3b32be4f-bb27-406d-b1f1-10e4e4a8b648" width="200">
+<img src="https://github.com/user-attachments/assets/54c852b3-88e0-457a-b54d-1e2c494008ac" alt="Example Image" width="200">
+<img src="https://github.com/user-attachments/assets/4b1774ca-baff-4577-acf7-39a511549fcd" alt="Example Image" width="200">
 
 <br>
 
@@ -70,7 +67,7 @@
 #### my
 <br>
 
-<img src="https://github.com/jjinleee/RUTI/assets/93428123/071cca3d-cd45-4f34-8ea9-9ecb795a7585" alt="Example Image" width="200">
+<img src="https://github.com/user-attachments/assets/b1165ca1-9a2c-4ba5-9caa-c69514aae579" alt="Example Image" width="200">
 
 <br>
 
