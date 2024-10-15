@@ -15,9 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +25,19 @@ public class NotificationService {
     private RoutineRepository routineRepository;
     @Autowired
     private UserRepository userRepository;
+
+    // 로그인된 사용자의 이메일을 메모리에 저장하는 전역 리스트
+    private Set<String> loggedInUserEmails = new HashSet<>();
+
+    // 로그인할 때 호출하는 메소드 (예시로 구현)
+    public void addLoggedInUser(String userEmail) {
+        loggedInUserEmails.add(userEmail);
+    }
+
+    // 로그아웃할 때 호출하는 메소드 (예시로 구현)
+    public void removeLoggedInUser(String userEmail) {
+        loggedInUserEmails.remove(userEmail);
+    }
 
     private String convertToEnglishDay(String day) {
         switch (day) {
@@ -72,43 +83,45 @@ public class NotificationService {
         }
     }
 
+    // 스케줄러 메소드에서 메모리에 저장된 로그인된 사용자들의 루틴만 검사
     @Scheduled(cron = "0 * * * * *") // 매 분마다 실행
     public void checkAndSendRoutineNotifications() {
-        LocalDate currentDate = LocalDate.now();
-        String currentDay = currentDate.getDayOfWeek().name().toLowerCase(); // 현재 요일을 소문자로 변환
-        String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
-
-        List<RoutineEntity> routines = routineRepository.findAll();
-        for (RoutineEntity routine : routines) {
-            // 루틴에서 설정한 요일을 영어 형식으로 변환하고 소문자로 변환
-            List<String> activeDaysInEnglish = Arrays.stream(routine.getActiveDays().split(", "))
-                    .map(String::trim) // 공백 제거
-                    .map(this::convertToEnglishDay) // 요일을 영어 형식으로 변환
-                    .collect(Collectors.toList());
-
-            // 현재 요일, 날짜, 시간 조건에 맞는 루틴인지 확인
-            if (activeDaysInEnglish.contains(currentDay)
-                    && routine.getStartDate().compareTo(currentDate.toString()) <= 0
-                    && routine.getEndDate().compareTo(currentDate.toString()) >= 0
-                    && routine.getTime().equals(currentTime)) {
-                // 알림 전송
-                String targetToken = getFcmToken(routine.getUserEmail());
-                if (targetToken != null) {
-                    sendNotification(targetToken, routine.getTitle(), "루틴 시간입니다!");
-                } else {
-                    System.out.println("유효하지 않은 FCM 토큰입니다. 알림을 보낼 수 없습니다.");
-                }
-
-            } else {
-                if (!activeDaysInEnglish.contains(currentDay)) {
-                    System.out.println("요일 조건 불일치: " + currentDay + "는 활성화된 요일이 아닙니다.");
-                }
-                if (!routine.getTime().equals(currentTime)) {
-                    System.out.println("시간 조건 불일치: 현재 시간 " + currentTime + "은 루틴 시간 " + routine.getTime() + "과 일치하지 않습니다.");
-                }
+        // 현재 메모리에 저장된 로그인된 사용자의 이메일 리스트를 순회
+        for (String userEmail : loggedInUserEmails) {
+            List<RoutineEntity> userRoutines = routineRepository.findByUserEmail(userEmail);
+            for (RoutineEntity routine : userRoutines) {
+                sendNotificationIfRoutineMatches(routine, userEmail);
             }
         }
     }
+
+    // 각 루틴에 대해 알림을 보내는 로직을 분리
+    private void sendNotificationIfRoutineMatches(RoutineEntity routine, String userEmail) {
+        LocalDate currentDate = LocalDate.now();
+        String currentDay = currentDate.getDayOfWeek().name().toLowerCase();
+        String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+
+        // 루틴에서 설정한 요일을 영어 형식으로 변환하고 소문자로 변환
+        List<String> activeDaysInEnglish = Arrays.stream(routine.getActiveDays().split(", "))
+                .map(String::trim) // 공백 제거
+                .map(this::convertToEnglishDay) // 요일을 영어 형식으로 변환
+                .collect(Collectors.toList());
+
+        // 현재 요일, 날짜, 시간 조건에 맞는 루틴인지 확인
+        if (activeDaysInEnglish.contains(currentDay)
+                && routine.getStartDate().compareTo(currentDate.toString()) <= 0
+                && routine.getEndDate().compareTo(currentDate.toString()) >= 0
+                && routine.getTime().equals(currentTime)) {
+            // 알림 전송
+            String targetToken = getFcmToken(userEmail);
+            if (targetToken != null) {
+                sendNotification(targetToken, routine.getTitle(), "루틴 시간입니다!");
+            } else {
+                System.out.println("유효하지 않은 FCM 토큰입니다. 알림을 보낼 수 없습니다.");
+            }
+        }
+    }
+
 
     private boolean isTimeMatch(String routineTime, String currentTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
