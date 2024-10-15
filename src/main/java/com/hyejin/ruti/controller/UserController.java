@@ -2,6 +2,7 @@ package com.hyejin.ruti.controller;
 
 import com.hyejin.ruti.dto.UserDTO;
 import com.hyejin.ruti.entity.UserEntity;
+import com.hyejin.ruti.service.NotificationService;
 import com.hyejin.ruti.service.UserService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,9 @@ public class UserController {
 
     @Autowired
     private final UserService userService;
+    @Autowired
+    private final NotificationService notificationService;
+
 
     //회원가입
     @GetMapping("/join")
@@ -64,6 +68,7 @@ public class UserController {
         UserDTO loginResult=userService.login(userDTO);
         if(loginResult!=null){
             session.setAttribute("loginEmail",loginResult.getUserEmail());
+            notificationService.addLoggedInUser(loginResult.getUserEmail());
             return ResponseEntity.status(HttpStatus.OK).build();
         }else {
             return ResponseEntity.status(401).body("이메일 또는 비밀번호가 올바르지 않습니다.");        }
@@ -142,7 +147,11 @@ public class UserController {
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         HttpSession session= request.getSession(false);
         if(session!=null){
+            String loggedInUserEmail = (String) session.getAttribute("loginEmail");
             session.invalidate();
+            if (loggedInUserEmail != null) {
+                notificationService.removeLoggedInUser(loggedInUserEmail);
+            }
         }
         return ResponseEntity.ok().build();
     }
