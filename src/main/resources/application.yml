@@ -20,6 +20,7 @@ spring:
       ddl-auto: update #?????
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQLDialect
+      hibernate.jdbc.time_zone: UTC
 
   mvc:
     static-path-pattern: /**
