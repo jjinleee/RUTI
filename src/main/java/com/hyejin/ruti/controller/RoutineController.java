@@ -22,10 +22,10 @@ public class RoutineController {
     @Autowired
     private final RoutineService routineService;
     @GetMapping
-    public ResponseEntity<List<RoutineEntity>> getRoutines(HttpSession session) {
+    public ResponseEntity<List<RoutineDTO>> getRoutines(HttpSession session) {
         String userEmail = (String) session.getAttribute("loginEmail");
         if (userEmail != null) {
-            List<RoutineEntity> routines = routineService.getRoutines(userEmail);
+            List<RoutineDTO> routines = routineService.getRoutinesForToday(userEmail);
             return ResponseEntity.ok(routines);
         } else {
             return ResponseEntity.status(401).build();
@@ -67,10 +67,10 @@ public class RoutineController {
         }
     }
 
-    @PutMapping("/updateState/{id}")
-    public ResponseEntity<?> updateRoutineState(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+    @PutMapping("/updateState/{id}/{date}")
+    public ResponseEntity<?> updateRoutineStateForDate(@PathVariable Long id, @PathVariable String date, @RequestBody Map<String, String> requestBody) {
         String newState = requestBody.get("state");
-        boolean isUpdated = routineService.updateRoutineState(id, newState);
+        boolean isUpdated = routineService.updateRoutineStateForDate(id, date, newState);
         if (isUpdated) {
             return ResponseEntity.ok(Collections.singletonMap("success", true));
         } else {
