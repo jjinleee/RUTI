@@ -31,16 +31,20 @@ public class RoutineService {
 
 
     @Transactional
-    public List<RoutineEntity> getRoutinesForToday(String userEmail) {
+    public List<RoutineDTO> getRoutinesForToday(String userEmail) {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String todayStr = today.format(formatter); // 현재 날짜를 "yyyy-MM-dd" 형식의 문자열로 변환
 
+        System.out.println("오늘 날짜: " + todayStr);
+        System.out.println("사용자 이메일: " + userEmail);
+
         List<RoutineEntity> routineEntities = routineRepository.findAllByUserEmailAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userEmail, todayStr, todayStr);
 
-        return routineEntities;
+        return routineEntities.stream()
+                .map(RoutineDTO::fromEntity)
+                .collect(Collectors.toList());
     }
-
 
     public RoutineEntity addRoutine(RoutineDTO routineDTO, String userEmail) {
         // 루틴 엔티티 생성 및 저장
@@ -69,9 +73,6 @@ public class RoutineService {
         return savedRoutine;
     }
 
-    /**
-     * 루틴을 업데이트합니다.
-     */
     public boolean updateRoutine(Long id, RoutineDTO routineDTO) {
         return routineRepository.findById(id).map(routineEntity -> {
             routineEntity.setTitle(routineDTO.getTitle());
@@ -84,10 +85,10 @@ public class RoutineService {
         }).orElse(false);
     }
 
-    /**
-     * 특정 날짜에 해당하는 루틴 상태를 업데이트합니다.
-     */
+
     public boolean updateRoutineStateForDate(Long routineId, String date, String state) {
+        System.out.println("Updating state for Routine ID: " + routineId + ", Date: " + date + ", New State: " + state);
+
         Optional<RoutineEntity> routineEntityOptional = routineRepository.findById(routineId);
         if (routineEntityOptional.isPresent()) {
             RoutineEntity routineEntity = routineEntityOptional.get();
@@ -109,9 +110,7 @@ public class RoutineService {
         return false;
     }
 
-    /**
-     * 루틴을 삭제합니다.
-     */
+
     public boolean deleteRoutine(Long id) {
         Optional<RoutineEntity> routineEntityOptional = routineRepository.findById(id);
         if (routineEntityOptional.isPresent()) {
@@ -121,9 +120,7 @@ public class RoutineService {
         return false;
     }
 
-    /**
-     * 루틴 ID로 루틴을 가져옵니다.
-     */
+
     public RoutineEntity getRoutineById(Long id) {
         return routineRepository.findById(id).orElse(null);
     }

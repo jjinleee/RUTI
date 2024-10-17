@@ -22,10 +22,10 @@ public class RoutineController {
     @Autowired
     private final RoutineService routineService;
     @GetMapping
-    public ResponseEntity<List<RoutineEntity>> getRoutines(HttpSession session) {
+    public ResponseEntity<List<RoutineDTO>> getRoutines(HttpSession session) {
         String userEmail = (String) session.getAttribute("loginEmail");
         if (userEmail != null) {
-            List<RoutineEntity> routines = routineService.getRoutinesForToday(userEmail);
+            List<RoutineDTO> routines = routineService.getRoutinesForToday(userEmail);
             return ResponseEntity.ok(routines);
         } else {
             return ResponseEntity.status(401).build();
