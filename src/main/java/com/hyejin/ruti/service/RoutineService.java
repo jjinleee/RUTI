@@ -73,14 +73,48 @@ public class RoutineService {
         return savedRoutine;
     }
 
+    @Transactional
     public boolean updateRoutine(Long id, RoutineDTO routineDTO) {
         return routineRepository.findById(id).map(routineEntity -> {
+            // 루틴 엔티티 업데이트
             routineEntity.setTitle(routineDTO.getTitle());
             routineEntity.setStartDate(routineDTO.getStartDate());
             routineEntity.setEndDate(routineDTO.getEndDate());
             routineEntity.setTime(routineDTO.getTime());
             routineEntity.setActiveDays(routineDTO.getActiveDays());
             routineRepository.save(routineEntity);
+
+            // 새로운 날짜 범위와 활성 요일을 설정
+            LocalDate newStartDate = LocalDate.parse(routineDTO.getStartDate());
+            LocalDate newEndDate = LocalDate.parse(routineDTO.getEndDate());
+            List<String> newActiveDays = Arrays.asList(routineDTO.getActiveDays().split(", "));
+
+            // 범위 밖의 상태 삭제
+            routineStateRepository.deleteByRoutineAndOutsideDateRange(
+                    routineEntity,
+                    newStartDate.toString(),
+                    newEndDate.toString(),
+                    newActiveDays
+            );
+
+            // 새로운 범위에 맞는 상태 정보 추가
+            for (LocalDate date = newStartDate; !date.isAfter(newEndDate); date = date.plusDays(1)) {
+                String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+                if (newActiveDays.contains(dayOfWeek)) {
+                    Optional<RoutineStateEntity> existingStateOpt = routineStateRepository.findByRoutineAndDate(routineEntity, date.toString());
+
+                    // 기존 상태가 없으면 새로운 상태 추가
+                    if (!existingStateOpt.isPresent()) {
+                        RoutineStateEntity newState = new RoutineStateEntity();
+                        newState.setRoutine(routineEntity);
+                        newState.setDate(date.toString());
+                        newState.setState("pending");
+                        routineStateRepository.save(newState);
+                    }
+                }
+            }
+
             return true;
         }).orElse(false);
     }
