@@ -61,7 +61,7 @@ RUTI는 현대인이 겪는 시간 관리와 일상 루틴 유지의 어려움�
 ## 👩Team👩
 |<img src="https://avatars.githubusercontent.com/u/93864238?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/93428123?v=4" width="150" height="150"/>|
 |:-:|:-:|
-|<strong>HYERIM</strong><br/>[@hyerim1127](https://github.com/hyerim1127)<br/>Full Stack|<strong>JIN</strong><br/>[@jjinleee](https://github.com/jjinleee)<br/>Full Stack|
+|<strong>HYERIM</strong><br/>[@hyerirn](https://github.com/hyerim1127)<br/>Full Stack|<strong>JIN</strong><br/>[@jjinleee](https://github.com/jjinleee)<br/>Full Stack|
 
 <br>
 <br>
