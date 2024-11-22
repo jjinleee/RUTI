@@ -63,6 +63,16 @@ RUTI는 현대인이 겪는 시간 관리와 일상 루틴 유지의 어려움�
 |:-:|:-:|
 |<strong>HYERIM</strong><br/>[@hyerirn](https://github.com/hyerim1127)<br/>Full Stack|<strong>JIN</strong><br/>[@jjinleee](https://github.com/jjinleee)<br/>Full Stack|
 
+#### :lemon: 이진
+* <b>UI</b> memo, routine, badge
+* <b>기능</b> user 관리, 문의, routine, 알림, my badge
+* <b>역할</b> API 문서화, 설계
+
+#### :peach: 장혜림
+* <b>UI</b> home, my, calendar
+* <b>기능</b> home, memo, my statistics
+* <b>역할</b> 설계
+
 <br>
 <br>
 
